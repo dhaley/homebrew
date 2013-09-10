@@ -33,8 +33,7 @@ class FormulaValidationError < StandardError
   end
 end
 
-class FormulaSpecificationError < StandardError
-end
+class FormulaSpecificationError < StandardError; end
 
 class FormulaUnavailableError < RuntimeError
   attr_reader :name
@@ -82,11 +81,9 @@ module Homebrew
   end
 end
 
-class CannotInstallFormulaError < RuntimeError
-end
+class CannotInstallFormulaError < RuntimeError; end
 
-class FormulaAlreadyInstalledError < RuntimeError
-end
+class FormulaAlreadyInstalledError < RuntimeError; end
 
 class FormulaInstallationAlreadyAttemptedError < Homebrew::InstallationError
   def message
@@ -112,6 +109,21 @@ class UnsatisfiedRequirements < Homebrew::InstallationError
                 ? "An unsatisfied requirement failed this build." \
                 : "Unsatisifed requirements failed this build."
     super formula, message
+  end
+end
+
+class IncompatibleCxxStdlibs < Homebrew::InstallationError
+  def initialize(f, dep, wrong, right)
+    super f, <<-EOS.undent
+    #{f} dependency #{dep} was built with the following
+    C++ standard library: #{wrong.type_string} (from #{wrong.compiler})
+
+    This is incompatible with the standard library being used
+    to build #{f}: #{right.type_string} (from #{right.compiler})
+
+    Please reinstall #{dep} using a compatible compiler.
+    hint: Check https://github.com/mxcl/homebrew/wiki/C++-Standard-Libraries
+    EOS
   end
 end
 
@@ -173,6 +185,12 @@ class BuildError < Homebrew::InstallationError
     else
       require 'cmd/--config'
       require 'cmd/--env'
+
+      unless formula.core_formula?
+        ohai "Formula"
+        puts "Tap: #{formula.tap}"
+        puts "Path: #{formula.path.realpath}"
+      end
       ohai "Configuration"
       Homebrew.dump_build_config
       ohai "ENV"
@@ -213,16 +231,13 @@ class CompilerSelectionError < StandardError
 end
 
 # raised in CurlDownloadStrategy.fetch
-class CurlDownloadStrategyError < RuntimeError
-end
+class CurlDownloadStrategyError < RuntimeError; end
 
 # raised by safe_system in utils.rb
-class ErrorDuringExecution < RuntimeError
-end
+class ErrorDuringExecution < RuntimeError; end
 
 # raised by Pathname#verify_checksum when "expected" is nil or empty
-class ChecksumMissingError < ArgumentError
-end
+class ChecksumMissingError < ArgumentError; end
 
 # raised by Pathname#verify_checksum when verification fails
 class ChecksumMismatchError < RuntimeError
