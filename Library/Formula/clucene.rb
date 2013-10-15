@@ -1,12 +1,14 @@
 require 'formula'
 
 class Clucene < Formula
-  homepage 'http://sourceforge.net/projects/clucene/'
-  url 'http://downloads.sourceforge.net/project/clucene/clucene-core-unstable/2.3/clucene-core-2.3.3.4.tar.gz'
-  md5 '48d647fbd8ef8889e5a7f422c1bfda94'
-  head 'git://clucene.git.sourceforge.net/gitroot/clucene/clucene'
-  
-  depends_on 'cmake' => :build
+  homepage 'http://clucene.sourceforge.net'
+  url 'http://downloads.sourceforge.net/project/clucene/clucene-core-stable/0.9.21b/clucene-core-0.9.21b.tar.bz2'
+  sha1 '8bc505b64f82723c2dc901036cb0607500870973'
+
+  head do
+    url 'git://clucene.git.sourceforge.net/gitroot/clucene/clucene'
+    depends_on 'cmake' => :build
+  end
 
   def install
 #     if ARGV.build_head?
