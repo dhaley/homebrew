@@ -9,11 +9,14 @@ class MidnightCommander < Formula
 
   depends_on 'pkg-config' => :build
   depends_on 'glib'
+  depends_on 'openssl' if MacOS.version <= :leopard
   depends_on 's-lang'
   depends_on 'libssh2'
 
   def install
-    system "./configure", "--disable-debug", "--disable-dependency-tracking",
+    system "./configure", "--disable-debug",
+                          "--disable-dependency-tracking",
+                          "--disable-silent-rules",
                           "--prefix=#{prefix}",
                           "--without-x",
                           "--with-screen=slang",

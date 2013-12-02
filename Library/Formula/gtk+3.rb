@@ -2,8 +2,8 @@ require 'formula'
 
 class Gtkx3 < Formula
   homepage 'http://gtk.org/'
-  url 'http://ftp.gnome.org/pub/gnome/sources/gtk+/3.10/gtk+-3.10.2.tar.xz'
-  sha256 '93af12d28e5f6ccc373ea59f31147e2884c9b3c15dc4841ce3b5cee45b13814c'
+  url 'http://ftp.gnome.org/pub/gnome/sources/gtk+/3.10/gtk+-3.10.5.tar.xz'
+  sha256 '3191f6d8e8cdf0bac1a8ed6388acc67a15acf5e276161c9b93a305938d29ccc7'
 
   depends_on :x11 => '2.5' # needs XInput2, introduced in libXi 1.3
   depends_on 'pkg-config' => :build
@@ -25,7 +25,8 @@ class Gtkx3 < Formula
                           "--prefix=#{prefix}",
                           "--disable-glibtest",
                           "--enable-introspection=yes",
-                          "--enable-x11-backend"
+                          "--enable-x11-backend",
+                          "--disable-schemas-compile"
     system "make install"
     # Prevent a conflict between this and Gtk+2
     mv bin/'gtk-update-icon-cache', bin/'gtk3-update-icon-cache'

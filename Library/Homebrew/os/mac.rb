@@ -50,6 +50,10 @@ module OS
       end
     end
 
+    def dev_tools_prefix
+      dev_tools_path.parent.parent
+    end
+
     def dev_tools_path
       @dev_tools_path ||= if tools_in_prefix? CLT::MAVERICKS_PKG_PATH
         Pathname.new "#{CLT::MAVERICKS_PKG_PATH}/usr/bin"
@@ -209,11 +213,11 @@ module OS
     end
 
     def prefer_64_bit?
-      Hardware::CPU.is_64_bit? and version != :leopard
+      Hardware::CPU.is_64_bit? and version > :leopard
     end
 
     def preferred_arch
-      @preferred_arch ||= if prefer_64_bit?
+      if prefer_64_bit?
         Hardware::CPU.arch_64_bit
       else
         Hardware::CPU.arch_32_bit
@@ -243,6 +247,7 @@ module OS
       "4.6.3" => { :llvm_build => 2336, :clang => "4.2", :clang_build => 425 },
       "5.0"   => { :clang => "5.0", :clang_build => 500 },
       "5.0.1" => { :clang => "5.0", :clang_build => 500 },
+      "5.0.2" => { :clang => "5.0", :clang_build => 500 },
     }
 
     def compilers_standard?
