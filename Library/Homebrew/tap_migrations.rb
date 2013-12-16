@@ -14,4 +14,6 @@ TAP_MIGRATIONS = {
   'aimage' => 'homebrew/boneyard',
   'cmucl' => 'homebrew/binary',
   'lmutil' => 'homebrew/binary',
+  'jscoverage' => 'homebrew/boneyard',
+  'jsl' => 'homebrew/binary',
 }
