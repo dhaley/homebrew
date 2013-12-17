@@ -758,7 +758,7 @@ def check_git_newline_settings
 
     If you are not routinely dealing with Windows-based projects,
     consider removing these by running:
-    `git config --global --set core.autocrlf input`
+    `git config --global core.autocrlf input`
     EOS
   end
 end
@@ -776,6 +776,14 @@ def check_git_origin
       properly. You can solve this by adding the Homebrew remote:
         cd #{HOMEBREW_REPOSITORY}
         git remote add origin https://github.com/Homebrew/homebrew.git
+      EOS
+    elsif origin =~ /mxcl\/homebrew(\.git)?$/ then <<-EOS.undent
+      Outdated git origin remote found.
+
+      The main Homebrew repository has migrated to:
+        https://github.com/Homebrew/homebrew.git
+
+      Run `brew update` (again) to migrate to the new main repository location.
       EOS
     elsif origin !~ /Homebrew\/homebrew(\.git)?$/ then <<-EOS.undent
       Suspicious git origin remote found.
