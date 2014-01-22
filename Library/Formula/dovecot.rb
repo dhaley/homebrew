@@ -15,6 +15,7 @@ class Dovecot < Formula
   mirror 'http://fossies.org/linux/misc/dovecot-2.2.10.tar.gz'
   sha256 '75592483d40dc4f76cc3b41af40caa4be80478946a699d46846d5d03e4d2e09b'
 
+
   def install
     Libstemmer.new.brew { (buildpath/'libstemmer_c').install Dir['*'] }
     ENV.append 'CPPFLAGS', "-I/usr/local/Cellar/clucene/2.3.3.4/lib"
@@ -26,6 +27,7 @@ class Dovecot < Formula
                           "--with-ssl=openssl",
                           "--with-sqlite",
                           "--with-lucene",
+                          "--with-stemmer",
                           "--with-zlib",
                           "--with-bzlib"
     system "make install"
