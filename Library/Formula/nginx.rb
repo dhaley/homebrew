@@ -2,15 +2,21 @@ require 'formula'
 
 class Nginx < Formula
   homepage 'http://nginx.org/'
-  url 'http://nginx.org/download/nginx-1.4.4.tar.gz'
-  sha1 '304d5991ccde398af2002c0da980ae240cea9356'
+  url 'http://nginx.org/download/nginx-1.4.5.tar.gz'
+  sha1 '96c1aecd314f73a3c30a0db8c39ad15ddacb074e'
 
   devel do
-    url 'http://nginx.org/download/nginx-1.5.9.tar.gz'
-    sha1 '9904f15c877d679c5164242f8e59a176392aa573'
+    url 'http://nginx.org/download/nginx-1.5.10.tar.gz'
+    sha1 '89e2317c0d27a7386f62c3ba9362ae10b05e3159'
   end
 
   head 'http://hg.nginx.org/nginx/', :using => :hg
+
+  bottle do
+    sha1 "b5964496b5365e51cc9b7eb838b0499795e71861" => :mavericks
+    sha1 "2757fecb0611a6dd6e22a8122f775b917fac476f" => :mountain_lion
+    sha1 "f64a845d905589c9ad580ab4d5e6fe27c0eb53f9" => :lion
+  end
 
   env :userpaths
 
@@ -24,18 +30,15 @@ class Nginx < Formula
   depends_on 'passenger' => :optional
   depends_on 'openssl'
 
-  skip_clean 'logs'
-
   def passenger_config_args
-    nginx_ext = `passenger-config --nginx-addon-dir`.chomp
+    passenger_config = "#{HOMEBREW_PREFIX}/opt/passenger/bin/passenger-config"
+    nginx_ext = `#{passenger_config} --nginx-addon-dir`.chomp
 
     if File.directory?(nginx_ext)
       return "--add-module=#{nginx_ext}"
     end
 
-    puts "Unable to install nginx with passenger support. The passenger"
-    puts "gem must be installed and passenger-config must be in your path"
-    puts "in order to continue."
+    puts "Unable to install nginx with passenger support."
     exit
   end
 
@@ -84,7 +87,7 @@ class Nginx < Formula
     man8.install "objs/nginx.8"
     (var/'run/nginx').mkpath
 
-    # nginx’s docroot is #{prefix}/html, this isn't useful, so we symlink it
+    # nginx's docroot is #{prefix}/html, this isn't useful, so we symlink it
     # to #{HOMEBREW_PREFIX}/var/www. The reason we symlink instead of patching
     # is so the user can redirect it easily to something else if they choose.
     prefix.cd do
@@ -99,7 +102,7 @@ class Nginx < Formula
       Pathname.new("#{prefix}/html").make_relative_symlink(dst)
     end
 
-    # for most of this formula’s life the binary has been placed in sbin
+    # for most of this formula's life the binary has been placed in sbin
     # and Homebrew used to suggest the user copy the plist for nginx to their
     # ~/Library/LaunchAgents directory. So we need to have a symlink there
     # for such cases
@@ -130,7 +133,7 @@ class Nginx < Formula
     The default port has been set in #{HOMEBREW_PREFIX}/etc/nginx/nginx.conf to 8080 so that
     nginx can run without sudo.
     EOS
-    s << passenger_caveats if build.include? 'with-passenger'
+    s << passenger_caveats if build.with? 'passenger'
     s
   end
 
