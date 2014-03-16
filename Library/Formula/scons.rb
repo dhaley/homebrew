@@ -2,13 +2,14 @@ require 'formula'
 
 class Scons < Formula
   homepage 'http://www.scons.org'
-  url 'http://downloads.sourceforge.net/scons/scons-2.3.0.tar.gz'
-  sha1 '728edf20047a9f8a537107dbff8d8f803fd2d5e3'
+  url 'https://downloads.sourceforge.net/scons/scons-2.3.1.tar.gz'
+  sha1 '775e715e49fe5fd8e1d29551a296fdc9267509e7'
 
   bottle do
-    sha1 "ba61be5122f1b4d918f50403dc68f27ee0b5e4d9" => :mavericks
-    sha1 "35b7e5c98b133d28606eb4ca2afe11a5a5550fa2" => :mountain_lion
-    sha1 "24c58992d86f2a4d618993d002bc266fc0e362e4" => :lion
+    cellar :any
+    sha1 "f6a31c7fc99c208819e1fc252e575a18ae610344" => :mavericks
+    sha1 "22695889878b8ea52080a993a83f4629456c160c" => :mountain_lion
+    sha1 "d908b069967695504f40f0d89323657e64dc7ef7" => :lion
   end
 
   def install

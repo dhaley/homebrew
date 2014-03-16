@@ -2,8 +2,9 @@ require 'formula'
 
 class Python3 < Formula
   homepage 'http://www.python.org/'
-  url 'http://python.org/ftp/python/3.3.4/Python-3.3.4.tgz'
-  sha1 '0561d2a24067c03ed2b29c58a12e126e86ccdc58'
+  url 'http://python.org/ftp/python/3.3.5/Python-3.3.5.tgz'
+  sha1 '15f24702c5ae07d364606c663e515c1d9ba58615'
+
   VER='3.3'  # The <major>.<minor> is used so often.
 
   head 'http://hg.python.org/cpython', :using => :hg, :branch => VER
@@ -99,8 +100,9 @@ class Python3 < Formula
     end
 
     if build.with? 'brewed-tk'
-      ENV.append 'CPPFLAGS', "-I#{Formula.factory('tcl-tk').opt_prefix}/include"
-      ENV.append 'LDFLAGS', "-L#{Formula.factory('tcl-tk').opt_prefix}/lib"
+      tcl_tk = Formula["tcl-tk"].opt_prefix
+      ENV.append 'CPPFLAGS', "-I#{tcl_tk}/include"
+      ENV.append 'LDFLAGS', "-L#{tcl_tk}/lib"
     end
 
     system "./configure", *args
@@ -174,8 +176,9 @@ class Python3 < Formula
 
   def distutils_fix_superenv(args)
     # To allow certain Python bindings to find brewed software (and sqlite):
-    cflags = "CFLAGS=-I#{HOMEBREW_PREFIX}/include -I#{Formula.factory('sqlite').opt_prefix}/include"
-    ldflags = "LDFLAGS=-L#{HOMEBREW_PREFIX}/lib -L#{Formula.factory('sqlite').opt_prefix}/lib"
+    sqlite = Formula["sqlite"].opt_prefix
+    cflags = "CFLAGS=-I#{HOMEBREW_PREFIX}/include -I#{sqlite}/include"
+    ldflags = "LDFLAGS=-L#{HOMEBREW_PREFIX}/lib -L#{sqlite}/lib"
     unless MacOS::CLT.installed?
       # Help Python's build system (setuptools/pip) to build things on Xcode-only systems
       # The setup.py looks at "-isysroot" to get the sysroot (and not at --sysroot)
@@ -183,7 +186,7 @@ class Python3 < Formula
       ldflags += " -isysroot #{MacOS.sdk_path}"
       # Same zlib.h-not-found-bug as in env :std (see below)
       args << "CPPFLAGS=-I#{MacOS.sdk_path}/usr/include"
-      unless build.with? 'brewed-tk'
+      if build.without? 'brewed-tk'
         cflags += " -I#{MacOS.sdk_path}/System/Library/Frameworks/Tk.framework/Versions/8.5/Headers"
       end
     end

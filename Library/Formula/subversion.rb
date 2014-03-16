@@ -75,7 +75,7 @@ class Subversion < Formula
       # scons ignores our compiler and flags unless explicitly passed
       args = %W[PREFIX=#{serf_prefix} GSSAPI=/usr CC=#{ENV.cc}
                 CFLAGS=#{ENV.cflags} LINKFLAGS=#{ENV.ldflags}]
-      args << "OPENSSL=#{Formula.factory('openssl').opt_prefix}" if build.with? 'brewed-openssl'
+      args << "OPENSSL=#{Formula["openssl"].opt_prefix}" if build.with? 'brewed-openssl'
       scons *args
       scons "install"
     end
@@ -118,7 +118,7 @@ class Subversion < Formula
             "--prefix=#{prefix}",
             "--with-apr=#{apr_bin}",
             "--with-zlib=/usr",
-            "--with-sqlite=#{Formula.factory('sqlite').opt_prefix}",
+            "--with-sqlite=#{Formula["sqlite"].opt_prefix}",
             "--with-serf=#{serf_prefix}",
             "--disable-mod-activation",
             "--disable-nls",
@@ -180,7 +180,7 @@ class Subversion < Formula
       system "make", "install-swig-pl", "DESTDIR=#{prefix}"
       # Some of the libraries get installed into the wrong place, they end up having the
       # prefix in the directory name twice.
-      mv Dir.glob("#{prefix}/#{lib}/*"), "#{lib}"
+      mv Dir["#{prefix}/#{lib}/*"], "#{lib}"
     end
 
     if build.include? 'java'
@@ -203,7 +203,7 @@ class Subversion < Formula
   def caveats
     s = <<-EOS.undent
       svntools have been installed to:
-        #{opt_prefix}/libexec
+        #{opt_libexec}
     EOS
 
     if build.include? 'perl'

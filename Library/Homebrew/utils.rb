@@ -10,11 +10,11 @@ class Tty
     def blue; bold 34; end
     def white; bold 39; end
     def red; underline 31; end
-    def yellow; underline 33 ; end
+    def yellow; underline 33; end
     def reset; escape 0; end
     def em; underline 39; end
-    def green; color 92 end
-    def gray; bold 30 end
+    def green; bold 32; end
+    def gray; bold 30; end
 
     def width
       `/usr/bin/tput cols`.strip.to_i
@@ -148,14 +148,6 @@ def curl *args
   safe_system curl, *args
 end
 
-# Run scons using a Homebrew-installed version, instead of whatever
-# is in the user's PATH
-def scons *args
-  scons = Formulary.factory("scons").opt_prefix/'bin/scons'
-  raise "#{scons} is not executable" unless scons.exist? and scons.executable?
-  safe_system scons, *args
-end
-
 def puts_columns items, star_items=[]
   return if items.empty?
 
@@ -178,8 +170,11 @@ def puts_columns items, star_items=[]
 end
 
 def which cmd, path=ENV['PATH']
-  dir = path.split(File::PATH_SEPARATOR).find {|p| File.executable? File.join(p, cmd)}
-  Pathname.new(File.join(dir, cmd)) unless dir.nil?
+  path.split(File::PATH_SEPARATOR).find do |p|
+    pcmd = File.join(p, cmd)
+    return pcmd if File.executable?(pcmd) && !File.directory?(pcmd)
+  end
+  return nil
 end
 
 def which_editor
@@ -369,7 +364,7 @@ module GitHub extend self
   end
 
   def print_pull_requests_matching(query)
-    return if ENV['HOMEBREW_NO_GITHUB_API']
+    return [] if ENV['HOMEBREW_NO_GITHUB_API']
     puts "Searching pull requests..."
 
     open_or_closed_prs = issues_matching(query, :type => "pr")
