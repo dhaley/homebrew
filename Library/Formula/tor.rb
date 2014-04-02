@@ -5,16 +5,20 @@ class Tor < Formula
   url 'https://www.torproject.org/dist/tor-0.2.4.21.tar.gz'
   sha1 'b93b66e4d5162cefc711cb44f9167ed4799ef990'
 
-  devel do
-    url 'https://www.torproject.org/dist/tor-0.2.5.2-alpha.tar.gz'
-    version '0.2.5.2-alpha'
-    sha1 '80f4697dfc0473bf5ec642b074cee4ce95fd0fa6'
+  bottle do
+    sha1 "f27ce452523df8d27711e6817cfd8bb7075a0012" => :mavericks
+    sha1 "e71b8fc245c6e0256df831b16da360078aafe2c5" => :mountain_lion
+    sha1 "bbdb340ced6caa4d477dcc0cae42e8c42622bd81" => :lion
   end
 
-  option "with-brewed-openssl", "Build with Homebrew's OpenSSL instead of the system version" if MacOS.version > :leopard
+  devel do
+    url 'https://www.torproject.org/dist/tor-0.2.5.3-alpha.tar.gz'
+    version '0.2.5.3-alpha'
+    sha1 '29784b3f711780cd60fff076f6deb9b1f633fe5c'
+  end
 
   depends_on 'libevent'
-  depends_on 'openssl' if build.with?('brewed-openssl') || MacOS.version < :snow_leopard
+  depends_on 'openssl'
 
   def install
     # Fix the path to the control cookie.
@@ -23,14 +27,9 @@ class Tor < Formula
       'TOR_COOKIE="/var/lib/tor/data/control_auth_cookie"',
       'TOR_COOKIE="$HOME/.tor/control_auth_cookie"'
 
-    args = %W[
-      --disable-dependency-tracking
-      --prefix=#{prefix}
-    ]
-
-    args << "-with-ssl=#{Formula["openssl"].opt_prefix}" if build.with?("brewed-openssl") || MacOS.version < :snow_leopard
-
-    system "./configure", *args
+    system "./configure", "--disable-dependency-tracking",
+                          "--prefix=#{prefix}",
+                          "--with-openssl-dir=#{Formula["openssl"].opt_prefix}"
     system "make install"
 
     bin.install "contrib/tor-ctrl.sh" => "tor-ctrl"
