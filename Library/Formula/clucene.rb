@@ -35,12 +35,12 @@ class Clucene < Formula
   end
 
   def install
-    if build.head?
-      system "cmake", ".", *std_cmake_args
-    else
-      system "./configure", "--disable-debug", "--disable-dependency-tracking",
-                            "--prefix=#{prefix}"
-    end
+#     if ARGV.build_head?
+      system "cmake #{std_cmake_parameters} ."
+#     else
+#       system "./configure", "--disable-debug", "--disable-dependency-tracking",
+#                             "--prefix=#{prefix}"
+#     end
 
     # Serialize the install step. See:
     # https://github.com/Homebrew/homebrew/issues/8712
