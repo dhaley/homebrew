@@ -2,10 +2,10 @@ require 'formula'
 
 class Concurrencykit < Formula
   homepage 'http://concurrencykit.org'
-  url 'http://concurrencykit.org/releases/ck-0.4.1.tar.gz'
-  sha1 '53be7f3cc42bf46f409926a8add911bf49f37c20'
+  url 'http://concurrencykit.org/releases/ck-0.4.2.tar.gz'
+  sha1 '70c49d50345c915af2248e7f5223ecf74200dacb'
 
-  head 'git://git.concurrencykit.org/ck.git'
+  head 'https://github.com/concurrencykit/ck.git'
 
   bottle do
     cellar :any
