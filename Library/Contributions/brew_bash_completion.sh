@@ -61,14 +61,19 @@ __brew_complete_formulae ()
 {
     local cur="${COMP_WORDS[COMP_CWORD]}"
     local lib=$(brew --repository)/Library
+    local taps=${lib}/Taps
     local ff=$(\ls ${lib}/Formula 2>/dev/null | sed 's/\.rb//g')
-    local af=$(\ls ${lib}/Aliases 2>/dev/null | sed 's/\.rb//g')
-    local tf tap
+    local af=$(\ls ${lib}/Aliases 2>/dev/null)
+    local tf file
 
-    for dir in $(\ls ${lib}/Taps 2>/dev/null); do
-        tap="$(echo "$dir" | sed 's|-|/|g')"
-        tf="$tf $(\ls -1R "${lib}/Taps/${dir}" 2>/dev/null |
-                  grep '.\+.rb' | sed -E 's|(.+)\.rb|'"${tap}"'/\1|g')"
+    for file in ${taps}/*/*/*.rb ${taps}/*/*/Formula/*.rb ${taps}/*/*/HomebrewFormula/*.rb; do
+        [ -f "$file" ] || continue
+        file=${file/"Formula/"/}
+        file=${file/"HomebrewFormula/"/}
+        file=${file#${lib}/Taps/}
+        file=${file%.rb}
+        file=${file/homebrew-/}
+        tf="${tf} ${file}"
     done
 
     COMPREPLY=($(compgen -W "$ff $af $tf" -- "$cur"))
@@ -107,7 +112,16 @@ _brew_switch ()
 
 __brew_complete_tapped ()
 {
-    __brewcomp "$(\ls $(brew --repository)/Library/Taps 2>/dev/null | sed 's/-/\//g')"
+    local taplib=$(brew --repository)/Library/Taps
+    local dir taps
+
+    for dir in ${taplib}/*/*; do
+        [ -d "$dir" ] || continue
+        dir=${dir#${taplib}/}
+        dir=${dir/homebrew-/}
+        taps="$taps $dir"
+    done
+    __brewcomp "$taps"
 }
 
 _brew_complete_tap ()
@@ -119,16 +133,6 @@ _brew_complete_tap ()
         return
         ;;
     esac
-    __brew_complete_taps
-}
-
-__brew_complete_taps ()
-{
-    if [[ -z "$__brew_cached_taps" ]]; then
-        __brew_cached_taps="$(brew ls-taps)"
-    fi
-
-    __brewcomp "$__brew_cached_taps"
 }
 
 _brew_bottle ()
@@ -136,7 +140,7 @@ _brew_bottle ()
     local cur="${COMP_WORDS[COMP_CWORD]}"
     case "$cur" in
     --*)
-        __brewcomp "--merge --rb --write"
+        __brewcomp "--merge --rb --write --root_url="
         return
         ;;
     esac
@@ -218,7 +222,7 @@ _brew_info ()
     local cur="${COMP_WORDS[COMP_CWORD]}"
     case "$cur" in
     --*)
-        __brewcomp "--all --github --json=v1"
+        __brewcomp "--all --github --installed --json=v1"
         return
         ;;
     esac
@@ -366,6 +370,17 @@ _brew_uninstall ()
     __brew_complete_installed
 }
 
+_brew_unpack ()
+{
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+    case "$cur" in
+    --*)
+        __brewcomp "--git --patch --destdir="
+        return
+        ;;
+    esac
+    __brew_complete_formulae
+}
 _brew_update ()
 {
     local cur="${COMP_WORDS[COMP_CWORD]}"
@@ -446,12 +461,13 @@ _brew ()
                 2>/dev/null | sed -e "s/\.rb//g" -e "s/brew-//g" \
                 -e "s/.*\///g")
         __brewcomp "
-            --cache --cellar --config
+            --cache --cellar
             --env --prefix --repository
             audit
             cat
             cleanup
             commands
+            config --config
             create
             deps
             diy configure
@@ -515,6 +531,7 @@ _brew ()
     switch)                     _brew_switch ;;
     tap)                        _brew_complete_tap ;;
     uninstall|remove|rm)        _brew_uninstall ;;
+    unpack)                     _brew_unpack ;;
     unpin)                      __brew_complete_formulae ;;
     untap)                      __brew_complete_tapped ;;
     update)                     _brew_update ;;

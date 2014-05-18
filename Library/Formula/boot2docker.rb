@@ -3,8 +3,8 @@ require "formula"
 class Boot2docker < Formula
   homepage "https://github.com/boot2docker/boot2docker"
   head "https://github.com/boot2docker/boot2docker.git"
-  url 'https://github.com/boot2docker/boot2docker/archive/v0.7.1.tar.gz'
-  sha1 '447ab4bd75d31654f93e546bab20a9ba6e1a4dcd'
+  url 'https://github.com/boot2docker/boot2docker/archive/v0.9.1.tar.gz'
+  sha1 '543cf1a2d1e29e0cbd34874da4ae966fcbc8d1de'
 
   depends_on "docker" => :recommended
 
